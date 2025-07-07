@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include("partials/head.ejs") %>
+
+    <body class="bg-gray-700">
+        <%- include("partials/nav.ejs") %>
+            <div class="w-5/6 m-auto h-10">
+                <% if (message) { %>
+                    <div class="flex items-center justify-between p-4 mb-4 rounded-lg shadow text-white
+              <%= message.type == 'success' ? 'bg-green-500' : 
+                  message.type == 'danger'? 'bg-red-500' :'bg-blue-500' %>">
+                        <strong>
+                            <%= message.message %>
+                        </strong>
+                        <button class="text-white hover:text-gray-200 text-xl font-bold leading-none"
+                            onclick="this.parentElement.remove()" aria-label="Close">
+                            &times;
+                        </button>
+                    </div>
+                    <% } %>
+            </div>
+            <% if(users !="" ) { %>
+                <table class="w-5/6 m-auto border-collapse border border-gray-900">
+                    <thead>
+                        <tr class="bg-gray-900 text-white">
+                            <th class="py-2 px-4 text-left">ID</th>
+                            <th class="py-2 px-4 text-left">Image</th>
+                            <th class="py-2 px-4 text-left">Name</th>
+                            <th class="py-2 px-4 text-left">Email</th>
+                            <th class="py-2 px-4 text-left">Phone</th>
+                            <th class="py-2 px-4 text-left">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% users.forEach((row,index)=> { %>
+                            <tr class="bg-white border-b border-blue-500 hover:bg-gray-200 transition-all">
+                                <td class="py-2 px-4"><%= index %></td>
+                                <td class="py-2 px-4"><img src="<%= row.image %>" alt=""
+                                        class="w-20 h-20 rounded-md">
+                                </td>
+                                <td class="py-2 px-4"><%= row.name %></td>
+                                <td class="py-2 px-4"><%= row.email %></td>
+                                <td class="py-2 px-4"><%= row.phone %></td>
+                                <td class="py-2 px-4 flex items-center mt-8 gap-4"><a href="/edit/<%= row._id %>"><img src="/edit.png"
+                                            alt=""></a><a href="/delete/<%= row._id %>"><img src="/delete.png" alt=""></a></td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+                <% } else { %>
+                    <h1 class="text-center mt-5 text-5xl text-white">No users found in the database!..</h1>
+                    <% } %>
+                        <%- include("partials/footer.ejs") %>
+
+    </body>
+
+</html>
