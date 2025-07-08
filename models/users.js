@@ -20,6 +20,10 @@ const Schema = new mongoose.Schema({
         type:String,
         required:true
     },
+    role: {
+        type: Boolean,
+        default: false,
+    },
     created:{
         type:Date,
         required:true,

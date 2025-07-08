@@ -17,6 +17,8 @@ var upload = multer({
     storage: storage,
 }).single('image')
 
+
+
 router.post("/add", upload, async (req, res) => {
     try {
         const user = new User({
@@ -30,9 +32,8 @@ router.post("/add", upload, async (req, res) => {
         req.session.message = {
             type: "success",
             message: "User added successfully"
-
         }
-        res.redirect("/")
+        res.redirect("/home")
     }
     catch (err) {
         res.json({ message: err.message, type: "danger" })
@@ -44,6 +45,16 @@ router.post("/add", upload, async (req, res) => {
 
 router.get("/", async (req, res) => {
     try {
+        res.render("login", {
+            title: "Login Page",
+        });
+    } catch (err) {
+        res.json({ message: err.message });
+    }
+});
+
+router.get("/home", async (req, res) => {
+    try {
         const users = await User.find();
         res.render("index", {
             title: "Home Page",
@@ -53,6 +64,27 @@ router.get("/", async (req, res) => {
         res.json({ message: err.message });
     }
 });
+
+router.post("/login", async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).send("Email not found");
+        }
+        if (!user.role) {
+            return res.status(404).send("Access denied: Not an admin");
+        }
+        if (user.password !== password) {
+            return res.status(404).send("Incorrect password");
+        }
+        req.session.user = user;
+        res.redirect("/home")
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 
 
 router.get("/add", (req, res) => {
@@ -101,7 +133,7 @@ router.post('/update/:id', upload, async (req, res) => {
             message: "User Updated successfully"
 
         }
-        res.redirect("/")
+        res.redirect("/home")
     }
     catch (err) {
         res.json({ message: err.message, type: "danger" })
@@ -128,7 +160,7 @@ router.get("/delete/:id", async (req, res) => {
             message: "User deleted successfully",
         };
 
-        res.redirect("/");
+        res.redirect("/home");
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
